@@ -1,7 +1,13 @@
+import { useState } from "react";
 import { RiSparklingFill } from "react-icons/ri";
 import Intro from "@/components/Intro";
 
 function Form() {
+  const [fullname, setFullname] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [selectedServices, setSelectedServices] = useState([]);
+
   const services = [
     "Website Design",
     "Content",
@@ -11,11 +17,25 @@ function Form() {
     "Other",
   ];
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(selectedServices);
+  };
+
+  // @desc This function is invoked by clicking on checkbox
+  // @desc Logs the value
+  const handleCheckbox = (value, checked) => {
+    setSelectedServices((prevState) => {
+      const updatedServices = [...prevState];
+      updatedServices.push(value);
+      return updatedServices;
+    });
+  };
+
   return (
     <>
       <Intro />
-
-      <form className="flex flex-col gap-1">
+      <form className="flex flex-col gap-1" onSubmit={handleSubmit}>
         {/* Inputs */}
         <input
           type="text"
@@ -23,6 +43,8 @@ function Form() {
           id="fullname"
           placeholder="Your name"
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
+          value={fullname}
+          onChange={(e) => setFullname(e.target.value)}
         />
         <input
           type="email"
@@ -30,6 +52,8 @@ function Form() {
           id="email"
           placeholder="you@company.com"
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="text"
@@ -37,6 +61,8 @@ function Form() {
           id="message"
           placeholder="Tell us a bit about your project..."
           className="h-24 border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
 
         <p className="my-5 text-gray-800">How can we help?</p>
@@ -46,7 +72,13 @@ function Form() {
           {services.map((service, idx) => {
             return (
               <label key={idx} className="flex cursor-pointer gap-2">
-                <input type="checkbox" name="" id="" className="size-5" />
+                <input
+                  type="checkbox"
+                  name=""
+                  id=""
+                  className="size-5"
+                  onClick={(e) => handleCheckbox(service, e.target.checked)}
+                />
                 {service}
               </label>
             );

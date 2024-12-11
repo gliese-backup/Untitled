@@ -42,7 +42,7 @@ function Form() {
         <p className="my-5 text-gray-800">How can we help?</p>
 
         {/* Checkbox */}
-        <div className="mb-5 grid max-w-96 grid-cols-2">
+        <div className="mb-10 grid max-w-96 grid-cols-2">
           {services.map((service, idx) => {
             return (
               <label key={idx} className="flex cursor-pointer gap-2">

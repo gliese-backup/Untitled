@@ -3,40 +3,52 @@ import { RiSparklingFill } from "react-icons/ri";
 import Intro from "@/components/Intro";
 import configs from "@/utils/configs";
 
+const services = [
+  "Website Design",
+  "Content",
+  "UX Design",
+  "Strategy",
+  "User Research",
+  "Other",
+];
+
 function Form() {
-  const [fullname, setFullname] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [selectedServices, setSelectedServices] = useState([]);
+  const [formValue, setFormValues] = useState({
+    fullname: "a",
+    email: "b",
+    message: "c",
+    services: [],
+  });
 
-  const services = [
-    "Website Design",
-    "Content",
-    "UX Design",
-    "Strategy",
-    "User Research",
-    "Other",
-  ];
-
+  // Runs on form submit button
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(fullname, email, message, selectedServices);
+    console.log(formValue);
   };
 
-  // @desc This function is invoked by clicking on checkbox
-  // @desc Logs the value
-  const handleCheckbox = (value, checked) => {
-    setSelectedServices((prevState) => {
-      const updatedServices = [...prevState];
-      updatedServices.push(value);
-      return updatedServices;
+  // Runs whenever our input field changes
+  const handleInputChange = (value, field) => {
+    setFormValues((prevState) => {
+      return { ...prevState, [field]: value };
+    });
+  };
+
+  const handleCheckbox = (value, status) => {
+    setFormValues((prevState) => {
+      const newServices = prevState.services.slice(); // this is the services array
+
+      const updatedServices = status
+        ? [...newServices, value]
+        : newServices.filter((v) => v != value);
+
+      return { ...prevState, services: updatedServices };
     });
   };
 
   return (
     <>
       <Intro />
-      <form className="flex flex-col gap-1" action={configs.submitUrl}>
+      <form className="flex flex-col gap-1" onSubmit={handleSubmit}>
         {/* Inputs */}
         <input
           type="text"
@@ -44,8 +56,8 @@ function Form() {
           id="fullname"
           placeholder="Your name"
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
-          value={fullname}
-          onChange={(e) => setFullname(e.target.value)}
+          value={formValue.fullname}
+          onChange={(e) => handleInputChange(e.target.value, "fullname")}
         />
         <input
           type="email"
@@ -53,8 +65,8 @@ function Form() {
           id="email"
           placeholder="you@company.com"
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formValue.email}
+          onChange={(e) => handleInputChange(e.target.value, "email")}
         />
         <input
           type="text"
@@ -62,8 +74,8 @@ function Form() {
           id="message"
           placeholder="Tell us a bit about your project..."
           className="h-24 border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={formValue.message}
+          onChange={(e) => handleInputChange(e.target.value, "message")}
         />
 
         <p className="my-5 text-gray-800">How can we help?</p>
@@ -91,7 +103,7 @@ function Form() {
           type="submit"
           className="flex items-center justify-center gap-2 rounded bg-zinc-950 p-2 text-white"
         >
-          Let's get started{" "}
+          Let's get started
           <RiSparklingFill className="text-lime-500" size={20} />
         </button>
       </form>

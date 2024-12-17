@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { RiSparklingFill } from "react-icons/ri";
 import Intro from "@/components/Intro";
 import configs from "@/utils/configs";
@@ -13,70 +13,77 @@ const services = [
 ];
 
 function Form() {
-  const [formValue, setFormValues] = useState({
-    fullname: "a",
-    email: "b",
-    message: "c",
-    services: [],
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      fullname: "",
+      email: "",
+      message: "",
+      services: [],
+    },
   });
-
-  // Runs on form submit button
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formValue);
-  };
-
-  // Runs whenever our input field changes
-  const handleInputChange = (value, field) => {
-    setFormValues((prevState) => {
-      return { ...prevState, [field]: value };
-    });
-  };
-
-  const handleCheckbox = (value, status) => {
-    setFormValues((prevState) => {
-      const newServices = prevState.services.slice(); // this is the services array
-
-      const updatedServices = status
-        ? [...newServices, value]
-        : newServices.filter((v) => v != value);
-
-      return { ...prevState, services: updatedServices };
-    });
-  };
 
   return (
     <>
       <Intro />
-      <form className="flex flex-col gap-1" onSubmit={handleSubmit}>
+      <form
+        className="flex flex-col gap-1"
+        onSubmit={handleSubmit((data) => {
+          console.log(data);
+        })}
+      >
         {/* Inputs */}
         <input
           type="text"
-          name={configs.fullname}
+          {...register("fullname", {
+            required: "Please enter your full name",
+            minLength: {
+              value: 4,
+              message: "Kaafi chota naam hai tumhara",
+            },
+          })}
           id="fullname"
           placeholder="Your name"
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
-          value={formValue.fullname}
-          onChange={(e) => handleInputChange(e.target.value, "fullname")}
         />
+        {errors.fullname && (
+          <p className="text-red-500">{errors.fullname.message}</p>
+        )}
+
         <input
           type="email"
-          name={configs.email}
+          {...register("email", {
+            required: "Please enter your email!",
+            pattern: {
+              value: /[\w]*@*[a-z]*\.*[\w]{5,}(\.)*(com)*(@gmail\.com)/,
+              message: "Temp mail ke chakkar mein mat reh, gmail daal de",
+            },
+          })}
           id="email"
           placeholder="you@company.com"
           className="border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
-          value={formValue.email}
-          onChange={(e) => handleInputChange(e.target.value, "email")}
         />
+        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+
         <input
           type="text"
-          name={configs.message}
+          {...register("message", {
+            required: "Enter a message dear!",
+            minLength: {
+              value: 5,
+              message: "Jada chota nhi hogya?",
+            },
+          })}
           id="message"
           placeholder="Tell us a bit about your project..."
           className="h-24 border-b border-stone-700 p-2 placeholder-gray-700 md:bg-lime-400"
-          value={formValue.message}
-          onChange={(e) => handleInputChange(e.target.value, "message")}
         />
+        {errors.message && (
+          <p className="text-red-500">{errors.message.message}</p>
+        )}
 
         <p className="my-5 text-gray-800">How can we help?</p>
 
@@ -87,15 +94,19 @@ function Form() {
               <label key={idx} className="flex cursor-pointer gap-2">
                 <input
                   type="checkbox"
-                  name={configs.services}
                   value={service}
+                  {...register("services", {
+                    required: "Enter atleast one!",
+                  })}
                   className="size-5"
-                  onClick={(e) => handleCheckbox(service, e.target.checked)}
                 />
                 {service}
               </label>
             );
           })}
+          {errors.services && (
+            <p className="text-red-500">{errors.services.message}</p>
+          )}
         </div>
 
         {/* Submit */}

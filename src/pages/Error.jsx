@@ -1,27 +1,27 @@
-import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import Header from "@/components/Header";
 
-function Error() {
-  const navigate = useNavigate();
+function Home() {
   const location = useLocation();
-  console.log(location.state.name);
+  const badWord = location.state?.badWord || "Bad Word";
+
   return (
-    <div>
-      <h1>Error</h1>
-      <button
-        onClick={() =>
-          navigate("/submission", {
-            state: {
-              data: "Carryminati",
-            },
-          })
-        }
-        className="bg-red-500"
-      >
-        Go to Submission
-      </button>
+    <div className="min-h-screen bg-zinc-50 px-4 py-3 md:px-8">
+      <Header />
+      <main className="rounded-lg bg-red-300 p-3">
+        <h1 className="text-2xl">Form Submission Failed 📛</h1>
+        <p className="my-1 text-lg">
+          Your form submission is flagged due to: {badWord}
+        </p>
+        <p className="text-slate-800">
+          Fill out the form again{" "}
+          <Link className="text-blue-600 underline" to="/">
+            here.
+          </Link>
+        </p>
+      </main>
     </div>
   );
 }
 
-export default Error;
+export default Home;
